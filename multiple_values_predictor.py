@@ -24,7 +24,7 @@ for i in range(0, len(text) - maxlen, step):
     next_chars.append(text[i + maxlen])
 print('nb sequences:', len(sentences))
 
-learner = ProbabilitySequenceLearner(char_indices, indices_char, 3)
+learner = ProbabilitySequenceLearner(char_indices, indices_char, 2)
 learner.learn_sentences(sentences)
 
 start_index = random.randint(0, len(text) - maxlen - 1)

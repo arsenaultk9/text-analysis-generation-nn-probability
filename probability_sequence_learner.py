@@ -59,7 +59,11 @@ class ProbabilitySequenceLearner:
             for current_mem_sequence in range(self.memory_length):
                 current_index = -(current_mem_sequence + 1)
                 cur_char_index = self.char_indices[sentence[current_index]]
-                next_char_probab += self.char_to_char_proba[current_mem_sequence][cur_char_index]
+
+                char_proba_time_ajusted = self.char_to_char_proba[current_mem_sequence][cur_char_index] * \
+                    (1 / (self.memory_length - current_mem_sequence))
+
+                next_char_probab += char_proba_time_ajusted
 
             next_index = np.where(next_char_probab ==
                                   np.max(next_char_probab))[0][0]
