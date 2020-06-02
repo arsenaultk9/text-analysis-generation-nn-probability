@@ -24,10 +24,10 @@ for i in range(0, len(text) - maxlen, step):
     next_chars.append(text[i + maxlen])
 print('nb sequences:', len(sentences))
 
-learner = ProbabilitySequenceLearner(char_indices, indices_char)
+learner = ProbabilitySequenceLearner(char_indices, indices_char, 3)
 learner.learn_sentences(sentences)
 
 start_index = random.randint(0, len(text) - maxlen - 1)
 primer_text = text[start_index: start_index + maxlen]
 
-learner.generate_from_text(primer_text)
+learner.generate_from_text(primer_text, 400)
