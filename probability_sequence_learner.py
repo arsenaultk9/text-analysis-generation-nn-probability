@@ -35,6 +35,8 @@ class ProbabilitySequenceLearner:
         for sequence_index in range(self.memory_length):
             for char_index, char_counter in enumerate(char_to_char_counter[sequence_index]):
                 total_usages = np.sum(char_counter)
+                if total_usages == 0:
+                    continue
 
                 for char_to_char_index, char_to_char_usage in enumerate(char_counter):
                     self.char_to_char_proba[sequence_index,
@@ -47,6 +49,9 @@ class ProbabilitySequenceLearner:
 
         print('----- Generating with seed: "' + sentence + '"')
 
+        sys.stdout.write(sentence)
+        sys.stdout.flush()
+
         for i in range(char_length):
             next_char_probab = np.zeros(shape=(len(self.char_indices)))
 
@@ -54,7 +59,7 @@ class ProbabilitySequenceLearner:
             for current_mem_sequence in range(self.memory_length):
                 current_index = -(current_mem_sequence + 1)
                 cur_char_index = self.char_indices[sentence[current_index]]
-                next_char_probab += self.char_to_char_proba[current_index][cur_char_index]
+                next_char_probab += self.char_to_char_proba[current_mem_sequence][cur_char_index]
 
             next_index = np.where(next_char_probab ==
                                   np.max(next_char_probab))[0][0]
