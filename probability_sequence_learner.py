@@ -13,22 +13,21 @@ class ProbabilitySequenceLearner:
         self.char_to_char_proba = np.zeros(
             shape=(memory_length, len(char_indices), len(char_indices)))
 
-    def learn_sentences(self, sentences):
+    def learn_sentences(self, text):
         print("=== Counting references of letters to letters ===")
 
         char_to_char_counter = np.zeros(
             shape=(self.memory_length, len(self.char_indices), len(self.char_indices)))
 
-        for sentence in sentences:
-            for char_index in range(len(sentence) - self.memory_length):
-                cur_char = sentence[char_index]
+        for char_index in range(len(text) - self.memory_length):
+            cur_char = text[char_index]
 
-                for current_mem_sequence in range(self.memory_length):
-                    next_char = sentence[char_index + current_mem_sequence + 1]
+            for current_mem_sequence in range(self.memory_length):
+                next_char = text[char_index + current_mem_sequence + 1]
 
-                    cur_char_probabilities = char_to_char_counter[
-                        current_mem_sequence][self.char_indices[cur_char]]
-                    cur_char_probabilities[self.char_indices[next_char]] += 1
+                cur_char_probabilities = char_to_char_counter[
+                    current_mem_sequence][self.char_indices[cur_char]]
+                cur_char_probabilities[self.char_indices[next_char]] += 1
 
         print("=== Tranforming to probabilities the total char to chars ===")
 
