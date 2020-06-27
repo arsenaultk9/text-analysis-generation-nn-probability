@@ -2,28 +2,33 @@ import numpy as np
 import sys
 
 
-class ProbabilitySequenceLearner:
-    def __init__(self, char_indices, indices_char, memory_length):
+class SingleCellSequenceLearner:
+    def __init__(self, text, memory_length):
         super().__init__()
 
-        self.char_indices = char_indices
-        self.indices_char = indices_char
+        self.text = text
+
+        chars = sorted(list(set(text)))
+        print('total chars:', len(chars))
+
+        self.char_indices = dict((c, i) for i, c in enumerate(chars))
+        self.indices_char = dict((i, c) for i, c in enumerate(chars))
         self.memory_length = memory_length
 
         self.char_to_char_proba = np.zeros(
-            shape=(memory_length, len(char_indices), len(char_indices)))
+            shape=(memory_length, len(self.char_indices), len(self.char_indices)))
 
-    def learn_sentences(self, text):
+    def learn_sentences(self):
         print("=== Counting references of letters to letters ===")
 
         char_to_char_counter = np.zeros(
             shape=(self.memory_length, len(self.char_indices), len(self.char_indices)))
 
-        for char_index in range(len(text) - self.memory_length):
-            cur_char = text[char_index]
+        for char_index in range(len(self.text) - self.memory_length):
+            cur_char = self.text[char_index]
 
             for current_mem_sequence in range(self.memory_length):
-                next_char = text[char_index + current_mem_sequence + 1]
+                next_char = self.text[char_index + current_mem_sequence + 1]
 
                 cur_char_probabilities = char_to_char_counter[
                     current_mem_sequence][self.char_indices[cur_char]]

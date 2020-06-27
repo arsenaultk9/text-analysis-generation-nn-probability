@@ -3,19 +3,14 @@ import random
 import sys
 import io
 
-from probability_sequence_learner import ProbabilitySequenceLearner
+from single_cell_sequence_learner import SingleCellSequenceLearner
 
 with io.open("more-complex-text.txt") as f:
     text = f.read().lower()
 print('corpus length:', len(text))
 
-chars = sorted(list(set(text)))
-print('total chars:', len(chars))
-char_indices = dict((c, i) for i, c in enumerate(chars))
-indices_char = dict((i, c) for i, c in enumerate(chars))
-
-learner = ProbabilitySequenceLearner(char_indices, indices_char, 2)
-learner.learn_sentences(text)
+learner = SingleCellSequenceLearner(text, 2)
+learner.learn_sentences()
 
 maxlen = 10
 start_index = 0  # random.randint(0, len(text) - maxlen - 1)
