@@ -3,13 +3,13 @@ import random
 import sys
 import io
 
-from single_cell_sequence_learner import SingleCellSequenceLearner
+from combined_cell_sequence_learner import CombinedCellSequenceLearner
 
-with io.open("more-complex-text.txt") as f:
+with io.open("nostradamus-quatrains.txt") as f:
     text = f.read().lower()
 print('corpus length:', len(text))
 
-learner = SingleCellSequenceLearner(text, 2)
+learner = CombinedCellSequenceLearner(text, 2)
 learner.learn_sentences()
 
 maxlen = 10
