@@ -3,9 +3,10 @@ import random
 import sys
 import io
 
+from single_cell_sequence_learner import SingleCellSequenceLearner
 from combined_cell_sequence_learner import CombinedCellSequenceLearner
 
-with io.open("nostradamus-quatrains.txt") as f:
+with io.open("more-complex-text.txt") as f:
     text = f.read().lower()
 print('corpus length:', len(text))
 
