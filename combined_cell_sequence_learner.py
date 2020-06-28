@@ -16,13 +16,13 @@ class CombinedCellSequenceLearner:
         self.memory_length = memory_length
 
         self.char_to_char_proba = np.zeros(
-            shape=(len(self.char_indices) * len(self.char_indices), len(self.char_indices)))
+            shape=(len(self.char_indices) ** 2, len(self.char_indices)))
 
     def learn_sentences(self):
         print("=== Counting references of letters to letters ===")
 
         char_to_char_counter = np.zeros(
-            shape=(len(self.char_indices) * len(self.char_indices), len(self.char_indices)))
+            shape=(len(self.char_indices) ** 2, len(self.char_indices)))
 
         for combined_char_index in range(len(self.text) - 2):
             cur_char = self.text[combined_char_index]
