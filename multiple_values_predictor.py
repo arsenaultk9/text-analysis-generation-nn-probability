@@ -10,10 +10,10 @@ with io.open("more-complex-text.txt") as f:
     text = f.read().lower()
 print('corpus length:', len(text))
 
-learner = CombinedCellSequenceLearner(text, 2)
+learner = CombinedCellSequenceLearner(text, 3)
 learner.learn_sentences()
 
-maxlen = 10
+maxlen = 7
 start_index = 0  # random.randint(0, len(text) - maxlen - 1)
 primer_text = text[start_index: start_index + maxlen]
 
