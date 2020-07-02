@@ -3,7 +3,7 @@ import sys
 
 
 class CombinedCellSequenceLearner:
-    def __init__(self, text, memory_length):
+    def __init__(self, text, memory_length, cell_size):
         super().__init__()
 
         self.text = text
@@ -13,30 +13,33 @@ class CombinedCellSequenceLearner:
 
         self.char_indices = dict((c, i) for i, c in enumerate(chars))
         self.indices_char = dict((i, c) for i, c in enumerate(chars))
+
         self.memory_length = memory_length
+        self.cell_size = cell_size
 
         self.char_to_char_proba = np.zeros(
-            shape=(memory_length, len(self.char_indices) ** 2, len(self.char_indices)))
+            shape=(memory_length, len(self.char_indices) ** cell_size, len(self.char_indices)))
 
     def learn_sentences(self):
         print("=== Counting references of letters to letters ===")
 
         char_to_char_counter = np.zeros(
-            shape=(self.memory_length, len(self.char_indices) ** 2, len(self.char_indices)))
+            shape=(self.memory_length, len(self.char_indices) ** self.cell_size, len(self.char_indices)))
 
         memory_buffer = self.memory_length - 1
 
-        for combined_char_index in range(len(self.text) - 2 - memory_buffer):
-            pred_char = self.text[combined_char_index + 2 + memory_buffer]
+        for combined_char_index in range(len(self.text) - self.cell_size - memory_buffer):
+            pred_char = self.text[combined_char_index +
+                                  self.cell_size + memory_buffer]
 
             for current_mem_sequence in range(self.memory_length):
-                cur_char = self.text[combined_char_index +
-                                     current_mem_sequence]
-                next_char = self.text[combined_char_index +
-                                      current_mem_sequence + 1]
+                cell_chars = []
 
-                combined_char_position = self.char_indices[cur_char] * len(
-                    self.char_indices) + self.char_indices[next_char]
+                for cell_char_pos in range(self.cell_size):
+                    cell_chars.append(
+                        self.text[combined_char_index + current_mem_sequence + cell_char_pos])
+
+                combined_char_position = self.get_combined_char_pos(cell_chars)
 
                 cur_char_probabilities = char_to_char_counter[current_mem_sequence][combined_char_position]
                 cur_char_probabilities[self.char_indices[pred_char]] += 1
@@ -66,15 +69,22 @@ class CombinedCellSequenceLearner:
         for i in range(char_length):
             next_char_probab = np.zeros(shape=(len(self.char_indices)))
 
-            # Cummulate backwards probability summations for next char. <- Correct this !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            # Cummulate backwards probability summations for next char.
             for current_mem_sequence in range(self.memory_length):
                 memory_pointer = self.memory_length - current_mem_sequence - 1
                 current_index = -(current_mem_sequence + 1)
 
-                combined_char_index = self.char_indices[sentence[current_index - 1]] * len(
-                    self.char_indices) + self.char_indices[sentence[current_index]]
+                cell_chars = []
 
-                char_proba_time_ajusted = self.char_to_char_proba[memory_pointer][combined_char_index] * \
+                for cell_char_pos in range(self.cell_size):
+                    cell_position_in_past = - \
+                        (self.cell_size - cell_char_pos - 1)
+                    cell_chars.append(
+                        sentence[current_index + cell_position_in_past])
+
+                combined_char_position = self.get_combined_char_pos(cell_chars)
+
+                char_proba_time_ajusted = self.char_to_char_proba[memory_pointer][combined_char_position] * \
                     (1 / (self.memory_length - memory_pointer))
 
                 next_char_probab += char_proba_time_ajusted
@@ -90,3 +100,13 @@ class CombinedCellSequenceLearner:
             sys.stdout.write(next_char)
             sys.stdout.flush()
         print()
+
+    def get_combined_char_pos(self, chars):
+        combined_char_position = 0
+
+        for char_index, cur_char in enumerate(chars):
+            position_power = self.cell_size - char_index - 1
+            combined_char_position += self.char_indices[cur_char] * (len(
+                self.char_indices) ** position_power)
+
+        return combined_char_position

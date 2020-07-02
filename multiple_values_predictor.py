@@ -10,7 +10,7 @@ with io.open("more-complex-text.txt") as f:
     text = f.read().lower()
 print('corpus length:', len(text))
 
-learner = CombinedCellSequenceLearner(text, 3)
+learner = CombinedCellSequenceLearner(text, 3, 2)
 learner.learn_sentences()
 
 maxlen = 7
